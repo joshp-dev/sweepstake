@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>It's Coming Home · House World Cup Sweepstake</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700;800&family=Archivo+Narrow:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --rojo:#CE1124;--rojo-deep:#A30D1C;      /* St George red */
+    --gualda:#1B2A6B;--gualda-soft:#2E418F;   /* navy accents */
+    --ink:#0A1A3F;--cream:#FFFFFF;            /* navy ink, white */
+    --paper:#F4F6FB;                          /* off-white panel wash */
+    --line:rgba(10,26,63,.14);
+    --win:#1B7A3E;--draw:#9A7B12;--loss:#CE1124;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Archivo',system-ui,sans-serif;color:var(--ink);
+    background:#eef1f7;
+    min-height:100vh;-webkit-font-smoothing:antialiased;
+  }
+  /* St George's cross as a fixed backdrop */
+  .flag-bg{position:fixed;inset:0;z-index:0;pointer-events:none;background:#fff}
+  .flag-bg::before{content:"";position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);
+    height:13vh;background:var(--rojo)}
+  .flag-bg::after{content:"";position:absolute;top:0;bottom:0;left:50%;transform:translateX(-50%);
+    width:13vh;background:var(--rojo)}
+  .wash{position:fixed;inset:0;z-index:0;pointer-events:none;
+    background:radial-gradient(ellipse at center,rgba(255,255,255,.35),rgba(255,255,255,.7) 70%,rgba(255,255,255,.85))}
+  .shell{position:relative;z-index:1;max-width:1080px;margin:0 auto;padding:0 18px 80px}
+
+  header.top{text-align:center;color:var(--ink);padding:40px 16px 18px}
+  .kicker{font-family:'Archivo Narrow';font-weight:700;letter-spacing:.42em;text-transform:uppercase;
+    font-size:13px;color:var(--rojo);text-shadow:none}
+  h1.brand{font-family:'Anton';font-weight:400;line-height:.9;font-size:clamp(52px,11.5vw,112px);
+    letter-spacing:.01em;text-transform:uppercase;margin:8px 0 4px;color:var(--rojo);
+    text-shadow:0 3px 0 var(--ink),0 7px 22px rgba(0,0,0,.25)}
+  h1.brand .es{display:block;color:var(--ink);font-size:.30em;letter-spacing:.30em;
+    text-shadow:none;margin-top:10px}
+  .sub{font-family:'Archivo Narrow';font-weight:600;color:var(--ink);text-shadow:none;
+    font-size:16px;margin-top:10px;letter-spacing:.04em}
+  .banner{display:inline-block;margin-top:16px;font-family:'Anton';text-transform:uppercase;
+    font-size:clamp(14px,2.4vw,20px);letter-spacing:.06em;color:var(--cream);background:var(--rojo);
+    border:3px solid var(--ink);border-radius:10px;padding:8px 20px;
+    box-shadow:0 5px 0 var(--ink);transform:rotate(-1.2deg)}
+
+  /* Stella Artois can (pure CSS) */
+  .stella{display:flex;flex-direction:column;align-items:center;gap:6px;margin:22px auto 4px;width:max-content}
+  .can{width:62px;filter:drop-shadow(0 8px 10px rgba(0,0,0,.28))}
+  .can-top{height:8px;background:linear-gradient(90deg,#9a9a9a,#e8e8e8,#9a9a9a);
+    border-radius:60px/12px;border:1px solid #7d7d7d}
+  .can-body{position:relative;height:120px;border-radius:6px;overflow:hidden;
+    background:linear-gradient(90deg,#b9000f,#e8121f 22%,#ff5a63 50%,#e8121f 78%,#b9000f);
+    border:1px solid #7d0009;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
+    padding-top:9px;color:#fff}
+  .can-body::before{content:"";position:absolute;top:34px;left:0;right:0;height:34px;
+    background:linear-gradient(90deg,#c9a23a,#f7e07a 50%,#c9a23a)}
+  .stella-star{position:relative;z-index:2;font-size:13px;line-height:1;color:#fff;margin-bottom:1px}
+  .stella-name{position:relative;z-index:2;font-family:'Anton';font-size:14px;letter-spacing:.04em;line-height:1}
+  .stella-artois{position:relative;z-index:2;font-family:'Archivo Narrow';font-weight:700;font-size:8px;
+    letter-spacing:.18em;color:#5a3b00;margin-top:18px}
+  .stella-est{position:relative;z-index:2;font-family:'Archivo Narrow';font-weight:700;font-size:6px;
+    letter-spacing:.15em;color:#fff;margin-top:14px;opacity:.9}
+  .stella-cap{font-family:'Archivo Narrow';font-weight:700;font-size:12px;text-transform:uppercase;
+    letter-spacing:.08em;color:var(--rojo)}
+
+  /* tabs */
+  .tabs{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:6px 0 18px}
+  .tab{font-family:'Archivo Narrow';font-weight:700;text-transform:uppercase;letter-spacing:.08em;
+    font-size:13px;color:var(--ink);background:#fff;border:2px solid var(--ink);
+    border-radius:999px;padding:8px 16px;cursor:pointer;transition:all .12s;box-shadow:0 2px 0 rgba(10,26,63,.25)}
+  .tab:hover{background:var(--paper)}
+  .tab.active{background:var(--ink);color:#fff;border-color:var(--ink)}
+
+  .controls{position:sticky;top:0;z-index:30;display:flex;flex-wrap:wrap;gap:12px;align-items:center;
+    justify-content:center;background:rgba(255,247,230,.92);backdrop-filter:blur(8px);
+    border:2px solid var(--ink);border-radius:14px;padding:12px 16px;margin:0 0 26px;
+    box-shadow:0 8px 28px rgba(0,0,0,.25)}
+  .btn{font-family:'Archivo';font-weight:800;font-size:14px;letter-spacing:.04em;border:2px solid var(--ink);
+    border-radius:10px;padding:10px 18px;cursor:pointer;background:var(--rojo);color:var(--cream);
+    text-transform:uppercase;transition:transform .08s,box-shadow .12s;display:inline-flex;align-items:center;gap:8px}
+  .btn:hover{transform:translateY(-1px);box-shadow:0 4px 0 var(--ink)}
+  .btn:active{transform:translateY(1px);box-shadow:none}
+  .btn.spin svg{animation:spin .8s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .toggle{display:inline-flex;align-items:center;gap:9px;font-weight:700;font-size:14px;color:var(--ink)}
+  .switch{position:relative;width:46px;height:26px;border:2px solid var(--ink);border-radius:20px;background:#fff;cursor:pointer;flex:none}
+  .switch::after{content:"";position:absolute;top:1px;left:1px;width:18px;height:18px;border-radius:50%;background:var(--ink);transition:left .18s}
+  .switch.on{background:var(--win)}.switch.on::after{left:23px;background:#fff}
+  .stamp{font-family:'Archivo Narrow';font-weight:600;font-size:13px;color:var(--ink);opacity:.85}
+  .stamp b{color:var(--rojo-deep)}
+  .livedot{display:inline-flex;align-items:center;gap:6px;font-family:'Archivo Narrow';font-weight:700;
+    font-size:13px;color:var(--loss);text-transform:uppercase;letter-spacing:.06em}
+  .livedot i{width:9px;height:9px;border-radius:50%;background:var(--loss);animation:pulse 1.2s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+
+  .panel{background:var(--cream);border:3px solid var(--ink);border-radius:18px;
+    box-shadow:0 18px 50px rgba(0,0,0,.28);overflow:hidden;margin-bottom:26px}
+  .panel>h2{font-family:'Anton';font-weight:400;text-transform:uppercase;letter-spacing:.04em;font-size:26px;
+    background:var(--ink);color:#fff;padding:14px 22px;display:flex;align-items:center;
+    justify-content:space-between;gap:12px}
+  .panel>h2 span.note{font-family:'Archivo Narrow';font-size:13px;color:var(--cream);font-weight:600;letter-spacing:.06em;opacity:.85}
+
+  table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+  thead th{font-family:'Archivo Narrow';font-weight:700;text-transform:uppercase;letter-spacing:.08em;font-size:12px;
+    text-align:center;padding:12px 8px;color:var(--ink);border-bottom:2px solid var(--ink);background:var(--gualda-soft)}
+  thead th.l{text-align:left}
+  tbody td{padding:13px 8px;text-align:center;border-bottom:1px solid var(--line);font-size:15px}
+  tbody td.l{text-align:left}tbody tr:last-child td{border-bottom:none}
+  .rankwrap{display:flex;align-items:center;gap:12px}
+  .rk{font-family:'Anton';font-size:18px;width:26px;text-align:center;color:var(--ink);opacity:.55}
+  .crest{font-size:24px;line-height:1;width:30px;text-align:center}
+  .team{display:flex;flex-direction:column;gap:2px;text-align:left}
+  .team b{font-size:16px;font-weight:800;letter-spacing:.01em}
+  .owner{display:inline-flex;align-items:center;gap:6px;font-family:'Archivo Narrow';font-weight:700;
+    font-size:12px;text-transform:uppercase;letter-spacing:.05em}
+  .dot{width:9px;height:9px;border-radius:50%;flex:none}
+  .pts{font-family:'Anton';font-size:22px;color:var(--rojo-deep)}
+  .form{display:inline-flex;gap:4px}
+  .f{width:18px;height:18px;border-radius:5px;font-size:11px;font-weight:800;color:#fff;display:inline-flex;align-items:center;justify-content:center}
+  .f.W{background:var(--win)}.f.D{background:var(--draw)}.f.L{background:var(--loss)}
+  tr.q td{background:rgba(27,122,62,.07)}tr.q .rk{color:var(--win);opacity:1}
+  .qbadge{font-size:10px;font-family:'Archivo Narrow';font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--win);border:1.5px solid var(--win);border-radius:5px;padding:1px 5px;margin-left:8px}
+
+  .lb{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;padding:18px 22px 24px}
+  .player{border:2px solid var(--ink);border-radius:12px;padding:14px;background:#fff;position:relative}
+  .player.lead{background:linear-gradient(180deg,#fff,#FBE3E5);box-shadow:0 6px 0 var(--rojo)}
+  .player .nm{display:flex;align-items:center;gap:8px;font-family:'Anton';font-size:20px;text-transform:uppercase}
+  .player .nm .dot{width:12px;height:12px}
+  .player .tot{font-family:'Anton';font-size:34px;color:var(--rojo-deep);line-height:1}
+  .player .totlbl{font-family:'Archivo Narrow';font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.7;margin-top:-2px}
+  .player ul{list-style:none;margin:10px 0 0;display:flex;flex-direction:column;gap:5px}
+  .player li{display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:600;border-top:1px dashed var(--line);padding-top:5px}
+  .player li .ld{display:flex;align-items:center;gap:6px}
+  .crown{position:absolute;top:-13px;right:12px;font-size:24px;filter:drop-shadow(0 2px 2px rgba(0,0,0,.3))}
+  .wooden{position:absolute;top:-13px;right:12px;font-size:22px}
+  .player.eliminated{opacity:.62;background:#F2EAD8;border-style:dashed}
+  .player.eliminated .nm{text-decoration:line-through;text-decoration-thickness:2px}
+  .statustag{display:inline-block;font-family:'Archivo Narrow';font-weight:700;text-transform:uppercase;
+    letter-spacing:.06em;font-size:11px;padding:3px 9px;border-radius:999px;margin:6px 0 2px}
+  .statustag.live{background:rgba(27,122,62,.15);color:var(--win);border:1.5px solid var(--win)}
+  .statustag.dead{background:rgba(177,18,38,.12);color:var(--loss);border:1.5px solid var(--loss)}
+  .statustag.champ-tag{background:var(--gualda);color:#fff;border:1.5px solid var(--ink)}
+  .player li.gone{opacity:.5}
+  .player li.gone .ld{text-decoration:line-through}
+
+  /* group-points summary */
+  .summary-list{padding:18px 22px 6px;display:flex;flex-direction:column;gap:12px}
+  .srow{display:flex;gap:14px;align-items:flex-start;padding:13px 14px;border:2px solid var(--ink);border-radius:12px;background:#fff}
+  .srow.top{background:linear-gradient(180deg,#fff,#FBE3E5);box-shadow:0 5px 0 var(--rojo)}
+  .srank{font-family:'Anton';font-size:30px;color:var(--ink);opacity:.4;min-width:34px;text-align:center;line-height:1}
+  .srow.top .srank{opacity:1;color:var(--rojo-deep)}
+  .sbody{flex:1;min-width:0}
+  .shead{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+  .snm{display:flex;align-items:center;gap:8px;font-family:'Anton';font-size:20px;text-transform:uppercase}
+  .snm .dot{width:12px;height:12px}
+  .topflag{font-family:'Archivo Narrow';font-weight:700;font-size:11px;letter-spacing:.06em;text-transform:uppercase;
+    color:#fff;background:var(--gualda);border:1.5px solid var(--ink);border-radius:999px;padding:2px 8px}
+  .stot{font-family:'Anton';font-size:28px;color:var(--rojo-deep);line-height:1}
+  .stot small{font-family:'Archivo Narrow';font-size:12px;font-weight:600;opacity:.7;margin-left:3px}
+  .sbar{height:10px;border-radius:6px;background:rgba(42,18,6,.1);overflow:hidden;margin:7px 0 8px}
+  .sbar span{display:block;height:100%;border-radius:6px;transition:width .5s ease}
+  .steams{display:flex;flex-wrap:wrap;gap:8px 16px;font-family:'Archivo Narrow';font-weight:600;font-size:13px}
+  .steams b{font-family:'Archivo';font-weight:800;color:var(--rojo-deep);margin-left:3px}
+  .snote{font-family:'Archivo Narrow';font-weight:600;font-size:13px;line-height:1.6;opacity:.8;padding:6px 24px 22px}
+
+  /* fixtures */
+  .fx{padding:8px 0 14px}
+  .fxday{font-family:'Archivo Narrow';font-weight:700;text-transform:uppercase;letter-spacing:.1em;font-size:13px;
+    color:var(--cream);background:var(--rojo);padding:7px 22px;position:sticky;top:0}
+  .fxrow{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px;padding:11px 22px;border-bottom:1px solid var(--line)}
+  .fxrow.mine{background:rgba(206,17,36,.10)}
+  .fxteam{display:flex;align-items:center;gap:8px;font-weight:700;font-size:15px}
+  .fxteam.away{justify-content:flex-end;text-align:right}
+  .fxteam .o{font-family:'Archivo Narrow';font-size:11px;font-weight:700;text-transform:uppercase;
+    letter-spacing:.04em;padding:1px 6px;border-radius:5px;color:#fff}
+  .fxmid{text-align:center;min-width:74px}
+  .fxscore{font-family:'Anton';font-size:22px;color:var(--ink);line-height:1}
+  .fxtime{font-family:'Archivo Narrow';font-weight:600;font-size:12px;color:var(--ink);opacity:.7}
+  .fxlive{font-family:'Archivo Narrow';font-weight:700;font-size:11px;color:var(--loss);text-transform:uppercase;letter-spacing:.06em}
+
+  /* bracket */
+  .bracket-scroll{overflow-x:auto;padding:20px 22px 26px}
+  .bracket{display:flex;gap:30px;min-width:760px}
+  .bround{display:flex;flex-direction:column;justify-content:space-around;gap:14px;flex:1;min-width:180px}
+  .bround h3{font-family:'Archivo Narrow';font-weight:700;text-transform:uppercase;letter-spacing:.1em;
+    font-size:12px;color:var(--rojo-deep);text-align:center;margin-bottom:2px}
+  .tie{border:2px solid var(--ink);border-radius:10px;background:#fff;overflow:hidden}
+  .tie .slot{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 11px;font-size:13px;font-weight:700}
+  .tie .slot+.slot{border-top:1px solid var(--line)}
+  .tie .slot.mine{background:rgba(206,17,36,.12)}
+  .tie .slot .nm{display:flex;align-items:center;gap:7px}
+  .tie .slot .o{width:8px;height:8px;border-radius:50%;flex:none}
+  .tie .sc{font-family:'Anton';font-size:15px;color:var(--rojo-deep)}
+  .tbd{opacity:.45;font-style:italic;font-weight:600}
+  .champ{align-self:center;text-align:center;border:3px solid var(--rojo);border-radius:12px;
+    background:linear-gradient(180deg,#fff,#FBE3E5);padding:14px 18px}
+  .champ .t{font-family:'Anton';font-size:13px;letter-spacing:.1em;color:var(--rojo-deep)}
+  .champ .c{font-size:30px;margin-top:4px}
+
+  .legend{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;color:var(--ink);
+    font-family:'Archivo Narrow';font-weight:600;font-size:13px;margin:2px 0 24px;
+    background:rgba(255,255,255,.85);border:2px solid var(--ink);border-radius:12px;padding:12px 18px}
+  .legend span{display:inline-flex;align-items:center;gap:7px}
+  footer{text-align:center;color:var(--ink);font-family:'Archivo Narrow';font-weight:600;
+    font-size:13px;padding:14px 16px;line-height:1.7;margin-top:8px;
+    background:rgba(255,255,255,.85);border:2px solid var(--ink);border-radius:12px}
+  .view{display:none}.view.active{display:block}
+
+  @media (max-width:560px){
+    thead th.hide,tbody td.hide{display:none}
+    .panel>h2{font-size:21px}.team b{font-size:15px}
+    .fxteam{font-size:13px}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="flag-bg"></div>
+<div class="wash"></div>
+<div class="shell">
+
+  <header class="top">
+    <div class="kicker">🏴󠁧󠁢󠁥󠁮󠁧󠁿 House Sweepstake · World Cup 2026 🏴󠁧󠁢󠁥󠁮󠁧󠁿</div>
+    <h1 class="brand">It's Coming<span class="es">Home</span></h1>
+    <p class="sub">8 players · 2 teams each · Winner takes all — whoever drew the champions takes the whole pot</p>
+    <div class="banner">⚽ Thirty years of hurt · never stopped us dreaming ⚽</div>
+    <div class="stella" title="Reassuringly chilled">
+      <div class="can">
+        <div class="can-top"></div>
+        <div class="can-body">
+          <span class="stella-star">★</span>
+          <span class="stella-name">STELLA</span>
+          <span class="stella-artois">ARTOIS</span>
+          <span class="stella-est">EST. 1366</span>
+        </div>
+      </div>
+      <span class="stella-cap">one for the lads 🍻</span>
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab active" data-view="standings">Standings</button>
+    <button class="tab" data-view="groups">Groups</button>
+    <button class="tab" data-view="fixtures">Fixtures</button>
+    <button class="tab" data-view="bracket">Knockout</button>
+    <button class="tab" data-view="summary">Group Points</button>
+  </nav>
+
+  <div class="controls">
+    <button class="btn" id="refresh">
+      <svg id="refIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>
+      Update scores
+    </button>
+    <label class="toggle"><span class="switch" id="liveSwitch" role="switch" aria-checked="false" tabindex="0"></span>Live auto-refresh</label>
+    <span class="livedot" id="livedot" style="display:none"><i></i>Live</span>
+    <div class="stamp">Updated <b id="stamp">—</b></div>
+  </div>
+
+  <div class="legend">
+    <span><span class="dot" style="background:var(--win)"></span> <span id="livestatus">Live results — pulls automatically</span></span>
+    <span><span class="statustag live" style="margin:0">Still in it</span> at least one team alive</span>
+    <span><span class="statustag dead" style="margin:0">Knocked out</span> both teams gone</span>
+    <span>👑 Drew the champions = takes the pot 🏆</span>
+  </div>
+
+  <!-- STANDINGS -->
+  <section class="view active" id="view-standings">
+    <div class="panel"><h2>Who's Still In It <span class="note">a player is out once both their teams are gone</span></h2>
+      <div class="lb" id="leaderboard"></div></div>
+  </section>
+
+  <!-- GROUPS -->
+  <section class="view" id="view-groups"><div id="groups"></div></section>
+
+  <!-- FIXTURES -->
+  <section class="view" id="view-fixtures">
+    <div class="panel"><h2>Fixtures &amp; Results <span class="note">house teams highlighted</span></h2>
+      <div class="fx" id="fixtures"></div></div>
+  </section>
+
+  <!-- BRACKET -->
+  <section class="view" id="view-bracket">
+    <div class="panel"><h2>Knockout Bracket <span class="note">Round of 32 underway · single elimination</span></h2>
+      <div class="bracket-scroll"><div class="bracket" id="bracket"></div></div></div>
+  </section>
+
+  <!-- SUMMARY -->
+  <section class="view" id="view-summary">
+    <div class="panel"><h2>Group Stage Points <span class="note">a bit of fun — doesn't decide the pot</span></h2>
+      <div id="summary"></div></div>
+  </section>
+
+  <footer>
+    Live results auto-pull from a free public World Cup feed (no API key) — updates within hours of full-time.<br>
+    If the feed is ever unreachable, the page falls back to the last saved snapshot so it never goes blank.
+  </footer>
+</div>
+
+<script>
+/* ===== PLAYERS ===== */
+const PLAYERS={
+  Josh:{color:'#C60B1E',teams:['Spain','Belgium']},
+  Aaron:{color:'#0033A0',teams:['Portugal','Uruguay']},
+  Sam:{color:'#1B7A3E',teams:['England','Senegal']},
+  Jenn:{color:'#7A1FA2',teams:['France','Ivory Coast']},
+  Joe:{color:'#0288D1',teams:['Argentina','Norway']},
+  Jamie:{color:'#E65100',teams:['Netherlands','Morocco']},
+  Justin:{color:'#00695C',teams:['Brazil','Colombia']},
+  Aisling:{color:'#AD1457',teams:['Germany','Japan']},
+};
+const OWNER={};for(const[n,i]of Object.entries(PLAYERS))i.teams.forEach(t=>OWNER[t]=n);
+
+/* ===== TEAMS (player teams carry rich stats) — to 17 Jun, matchday 5 ===== */
+/* WINNER-TAKES-ALL: only thing that matters is who's still alive.
+   alive:true while a team can still win it. round = furthest stage reached.
+   Group stage COMPLETE (27 Jun). All teams through except Uruguay (out, 3rd in H). */
+const TEAMS={
+  Spain:{flag:'🇪🇸',group:'H',alive:true,round:'Round of 32',form:['W']},
+  Belgium:{flag:'🇧🇪',group:'G',alive:true,round:'Round of 32',form:['W']},
+  Portugal:{flag:'🇵🇹',group:'K',alive:true,round:'Round of 32',form:['D']},
+  Uruguay:{flag:'🇺🇾',group:'H',alive:false,round:'Out — 3rd in Group H',form:['L']},
+  England:{flag:'🏴',group:'L',alive:true,round:'Round of 32',form:['W']},
+  Senegal:{flag:'🇸🇳',group:'I',alive:true,round:'Round of 32',form:['W']},
+  France:{flag:'🇫🇷',group:'I',alive:true,round:'Round of 32',form:['W']},
+  'Ivory Coast':{flag:'🇨🇮',group:'E',alive:true,round:'Round of 32',form:['W']},
+  Argentina:{flag:'🇦🇷',group:'J',alive:true,round:'Round of 32',form:['W']},
+  Norway:{flag:'🇳🇴',group:'I',alive:true,round:'Round of 32',form:['W']},
+  Netherlands:{flag:'🇳🇱',group:'F',alive:true,round:'Round of 32',form:['W']},
+  Morocco:{flag:'🇲🇦',group:'C',alive:true,round:'Round of 32',form:['W']},
+  Brazil:{flag:'🇧🇷',group:'C',alive:true,round:'Round of 32',form:['W']},
+  Colombia:{flag:'🇨🇴',group:'K',alive:true,round:'Round of 32',form:['D']},
+  Germany:{flag:'🇩🇪',group:'E',alive:true,round:'Round of 32',form:['W']},
+  Japan:{flag:'🇯🇵',group:'F',alive:true,round:'Round of 32',form:['D']},
+};
+
+/* full group rosters: [name,flag, ptsOrNull, gd, _, form] for non-player teams */
+/* Final group standings after all 3 matchdays. [name,flag,pts,gd,_,form] */
+const GROUP_ROSTERS={
+  C:[['Brazil','🇧🇷',7,4,0,['D','W','W']],['Morocco','🇲🇦',5,2,0,['D','W','D']],['Scotland','🏴󠁧󠁢󠁳󠁣󠁴󠁿',3,-1,0,['W','L','L']],['Haiti','🇭🇹',1,-5,0,['L','D','L']]],
+  E:[['Germany','🇩🇪',6,5,0,['W','W','L']],['Ivory Coast','🇨🇮',6,1,0,['W','L','W']],['Ecuador','🇪🇨',4,0,0,['L','D','W']],['Curacao','🇨🇼',0,-6,0,['L','D','L']]],
+  F:[['Netherlands','🇳🇱',7,7,0,['D','W','W']],['Japan','🇯🇵',5,3,0,['D','W','D']],['Sweden','🇸🇪',4,4,0,['W','L','D']],['Tunisia','🇹🇳',0,-12,0,['L','L','L']]],
+  G:[['Belgium','🇧🇪',5,5,0,['D','D','W']],['Egypt','🇪🇬',4,1,0,['D','W','D']],['Iran','🇮🇷',2,-1,0,['D','D','L']],['New Zealand','🇳🇿',1,-5,0,['D','L','L']]],
+  H:[['Spain','🇪🇸',7,2,0,['D','W','W']],['Cape Verde','🇨🇻',3,0,0,['D','D','D']],['Uruguay','🇺🇾',2,-1,0,['D','D','L']],['Saudi Arabia','🇸🇦',2,-1,0,['D','D','L']]],
+  I:[['France','🇫🇷',9,8,0,['W','W','W']],['Norway','🇳🇴',6,4,0,['W','W','L']],['Senegal','🇸🇳',3,1,0,['L','L','W']],['Iraq','🇮🇶',0,-13,0,['L','L','L']]],
+  J:[['Argentina','🇦🇷',9,7,0,['W','W','W']],['Austria','🇦🇹',4,1,0,['W','L','D']],['Algeria','🇩🇿',4,0,0,['L','W','D']],['Jordan','🇯🇴',0,-8,0,['L','L','L']]],
+  K:[['Colombia','🇨🇴',5,2,0,['D','W','D']],['Portugal','🇵🇹',5,2,0,['D','W','D']],['DR Congo','🇨🇩',4,0,0,['D','D','W']],['Uzbekistan','🇺🇿',1,-4,0,['L','D','L']]],
+  L:[['England','🏴',7,5,0,['W','W','D']],['Croatia','🇭🇷',4,0,0,['L','W','D']],['Ghana','🇬🇭',4,0,0,['W','L','D']],['Panama','🇵🇦',1,-5,0,['L','D','L']]],
+};
+const GTITLE={C:'Group C',E:'Group E',F:'Group F',G:'Group G',H:'Group H',I:'Group I',J:'Group J',K:'Group K',L:'Group L'};
+
+/* ===== FIXTURES (house-team matches; played + upcoming, ET) ===== */
+const FIXTURES=[
+  {day:'Group stage · key house results (final)',list:[
+    {h:'France',a:'Norway',hs:0,as:0,st:'FT'},
+    {h:'Spain',a:'Uruguay',hs:1,as:0,st:'FT'},
+    {h:'Germany',a:'Ivory Coast',hs:2,as:1,st:'FT'},
+    {h:'Netherlands',a:'Sweden',hs:5,as:1,st:'FT'},
+    {h:'Japan',a:'Sweden',hs:1,as:1,st:'FT'},
+    {h:'Belgium',a:'New Zealand',hs:5,as:1,st:'FT'},
+    {h:'Senegal',a:'Iraq',hs:5,as:0,st:'FT'},
+    {h:'Colombia',a:'Portugal',hs:0,as:0,st:'FT'},
+    {h:'Brazil',a:'Scotland',hs:2,as:0,st:'FT'},
+    {h:'Argentina',a:'Jordan',hs:3,as:0,st:'FT'},
+    {h:'England',a:'Ghana',hs:1,as:1,st:'FT'},
+  ]},
+  {day:'Round of 32 · Mon 29 Jun',list:[
+    {h:'Germany',a:'Paraguay',time:'Mon 4:00 PM ET'},
+    {h:'Netherlands',a:'Morocco',time:'Mon 7:00 PM ET'},
+    {h:'Brazil',a:'Japan',time:'Mon 10:00 PM ET'},
+  ]},
+  {day:'Round of 32 · Tue 30 Jun',list:[
+    {h:'France',a:'Sweden',time:'Tue 12:00 PM ET'},
+    {h:'Ivory Coast',a:'Norway',time:'Tue 3:00 PM ET'},
+  ]},
+  {day:'Round of 32 · Wed 1 Jul',list:[
+    {h:'England',a:'DR Congo',time:'Wed 3:00 PM ET'},
+    {h:'Belgium',a:'Senegal',time:'Wed 9:00 PM ET'},
+  ]},
+  {day:'Round of 32 · Thu 2 Jul',list:[
+    {h:'Portugal',a:'Croatia',time:'Thu 12:00 PM ET'},
+    {h:'Spain',a:'Austria',time:'Thu 3:00 PM ET'},
+  ]},
+  {day:'Round of 32 · Fri 3 Jul',list:[
+    {h:'Argentina',a:'Cape Verde',time:'Fri 4:00 PM ET'},
+    {h:'Colombia',a:'Ghana',time:'Fri 7:00 PM ET'},
+  ]},
+];
+
+/* ===== BRACKET skeleton (Round of 32 → Final). Slots fill once groups end. ===== */
+function bracketModel(){
+  const tbd=l=>({nm:l,tbd:true});
+  const t=nm=>({nm});  // real team — render highlights if a house team
+  return {
+    rounds:[
+      {name:'Round of 32',ties:[
+        // top half
+        [t('Germany'),t('Paraguay')],
+        [t('France'),t('Sweden')],
+        [t('South Africa'),t('Canada')],
+        [t('Netherlands'),t('Morocco')],
+        [t('Portugal'),t('Croatia')],
+        [t('Spain'),t('Austria')],
+        [t('USA'),t('Bosnia & Herz.')],
+        [t('Belgium'),t('Senegal')],
+        // bottom half
+        [t('Mexico'),t('Ecuador')],
+        [t('Ivory Coast'),t('Norway')],
+        [t('Brazil'),t('Japan')],
+        [t('Colombia'),t('Ghana')],
+        [t('Argentina'),t('Cape Verde')],
+        [t('Switzerland'),t('Algeria')],
+        [t('England'),t('DR Congo')],
+        [t('Australia'),t('Egypt')],
+      ]},
+      {name:'Round of 16',ties:Array.from({length:8},()=>[tbd('TBD'),tbd('TBD')])},
+      {name:'Quarter-finals',ties:Array.from({length:4},()=>[tbd('TBD'),tbd('TBD')])},
+      {name:'Semi-finals',ties:[[tbd('TBD'),tbd('TBD')],[tbd('TBD'),tbd('TBD')]]},
+      {name:'Final',ties:[[tbd('TBD'),tbd('TBD')]]},
+    ]
+  };
+}
+
+/* ===== render: standings table per group ===== */
+function teamRow(r){
+  const[name,flag]=r;
+  const pts=r[2]??0, gd=r[3]??0, form=r[5]||[];
+  return{name,flag,pts,gd,form,owner:OWNER[name]||null};
+}
+function renderGroups(){
+  const wrap=document.getElementById('groups');wrap.innerHTML='';
+  for(const g of Object.keys(GROUP_ROSTERS)){
+    const rows=GROUP_ROSTERS[g].map(teamRow).sort((a,b)=>b.pts-a.pts||b.gd-a.gd||a.name.localeCompare(b.name));
+    const owned=rows.some(r=>r.owner);
+    const p=document.createElement('section');p.className='panel';
+    p.innerHTML=`<h2>${GTITLE[g]}${owned?'<span class="note">house teams in play</span>':''}</h2>
+      <table><thead><tr><th class="l">Team</th><th>Pts</th><th class="hide">GD</th><th class="hide">Form</th><th class="l">Player</th></tr></thead>
+      <tbody>${rows.map((r,i)=>{const q=i<2;
+        const fh=r.form.map(f=>`<span class="f ${f}">${f}</span>`).join('')||'<span style="opacity:.4">—</span>';
+        const oh=r.owner?`<span class="owner"><span class="dot" style="background:${PLAYERS[r.owner].color}"></span>${r.owner}</span>`:'<span style="opacity:.35;font-size:12px">house</span>';
+        return `<tr class="${q?'q':''}"><td class="l"><div class="rankwrap"><span class="rk">${i+1}</span><span class="crest">${r.flag}</span><span class="team"><b>${r.name}${q?'<span class="qbadge">Q</span>':''}</b></span></div></td>
+        <td><span class="pts">${r.pts}</span></td><td class="hide">${r.gd>0?'+':''}${r.gd}</td><td class="hide"><span class="form">${fh}</span></td><td class="l">${oh}</td></tr>`;
+      }).join('')}</tbody></table>`;
+    wrap.appendChild(p);
+  }
+}
+
+/* ===== render: survival board (winner-takes-all) ===== */
+function renderLeaderboard(){
+  const lb=document.getElementById('leaderboard');lb.innerHTML='';
+  const players=Object.entries(PLAYERS).map(([n,info])=>{
+    const teams=info.teams.map(tn=>{
+      const t=TEAMS[tn]||{flag:'⚽',alive:false,round:'—'};
+      return{name:tn,flag:t.flag,alive:t.alive,round:t.round};
+    });
+    const live=teams.filter(t=>t.alive).length;
+    return{name:n,color:info.color,teams,live};
+  });
+  // still-alive first (more live teams = higher), eliminated drop to the bottom
+  players.sort((a,b)=>b.live-a.live||a.name.localeCompare(b.name));
+  const aliveCount=players.filter(p=>p.live>0).length;
+  players.forEach(p=>{
+    const out=p.live===0;
+    const c=document.createElement('div');
+    c.className='player'+(out?' eliminated':'')+(aliveCount===1&&p.live>0?' lead':'');
+    const tag=out?'<span class="statustag dead">Knocked out</span>'
+      :aliveCount===1?'<span class="statustag champ-tag">Takes the pot 🏆</span>'
+      :`<span class="statustag live">Still in it</span>`;
+    c.innerHTML=`${out?'<div class="wooden">💀</div>':aliveCount===1?'<div class="crown">👑</div>':''}
+      <div class="nm"><span class="dot" style="background:${p.color}"></span>${p.name}</div>
+      ${tag}
+      <ul>${p.teams.map(t=>`<li class="${t.alive?'':'gone'}"><span class="ld">${t.flag} ${t.name}</span><b>${t.alive?t.round:'out'}</b></li>`).join('')}</ul>`;
+    lb.appendChild(c);
+  });
+}
+
+/* ===== render: fixtures ===== */
+function fxTeam(name,away){
+  const t=TEAMS[name],owner=OWNER[name];
+  const badge=owner?`<span class="o" style="background:${PLAYERS[owner].color}">${owner}</span>`:'';
+  const flag=t?t.flag:'⚽';
+  return away?`<span class="fxteam away">${badge}${name} ${flag}</span>`:`<span class="fxteam">${flag} ${name}${badge}`+`</span>`;
+}
+function renderFixtures(){
+  const wrap=document.getElementById('fixtures');wrap.innerHTML='';
+  FIXTURES.forEach(d=>{
+    const head=document.createElement('div');head.className='fxday';head.textContent=d.day;wrap.appendChild(head);
+    d.list.forEach(m=>{
+      const mine=OWNER[m.h]||OWNER[m.a];
+      const row=document.createElement('div');row.className='fxrow'+(mine?' mine':'');
+      const mid=m.st==='FT'
+        ? `<div class="fxscore">${m.hs}–${m.as}</div><div class="fxtime">Full time</div>`
+        : m.st==='LIVE'
+        ? `<div class="fxscore">${m.hs}–${m.as}</div><div class="fxlive">● Live</div>`
+        : `<div class="fxtime">${m.time||'TBC'}</div>`;
+      row.innerHTML=`${fxTeam(m.h,false)}<div class="fxmid">${mid}</div>${fxTeam(m.a,true)}`;
+      wrap.appendChild(row);
+    });
+  });
+}
+
+/* ===== render: bracket ===== */
+function renderBracket(){
+  const wrap=document.getElementById('bracket');wrap.innerHTML='';
+  const model=bracketModel();
+  model.rounds.forEach(rd=>{
+    const col=document.createElement('div');col.className='bround';
+    col.innerHTML=`<h3>${rd.name}</h3>`;
+    rd.ties.forEach(tie=>{
+      const t=document.createElement('div');t.className='tie';
+      t.innerHTML=tie.map(s=>{
+        const owner=!s.tbd&&OWNER[s.nm];
+        const od=owner?`<span class="o" style="background:${PLAYERS[owner].color}"></span>`:'';
+        const flag=!s.tbd&&TEAMS[s.nm]?TEAMS[s.nm].flag+' ':'';
+        return `<div class="slot ${owner?'mine':''}"><span class="nm">${od}<span class="${s.tbd?'tbd':''}">${flag}${s.nm}</span></span><span class="sc">${s.sc??''}</span></div>`;
+      }).join('');
+      col.appendChild(t);
+    });
+    wrap.appendChild(col);
+  });
+  const champ=document.createElement('div');champ.className='bround';
+  champ.innerHTML=`<h3>Champion</h3><div class="champ"><div class="t">TAKES THE POT</div><div class="c">🏆</div></div>`;
+  wrap.appendChild(champ);
+}
+
+/* ===== render: group-stage points summary ===== */
+function teamPoints(name){
+  for(const g of Object.values(GROUP_ROSTERS)){
+    const row=g.find(r=>r[0]===name);
+    if(row) return row[2]??0;
+  }
+  return 0;
+}
+function renderSummary(){
+  const wrap=document.getElementById('summary');wrap.innerHTML='';
+  const rows=Object.entries(PLAYERS).map(([n,info])=>{
+    const teams=info.teams.map(tn=>({name:tn,flag:(TEAMS[tn]||{}).flag||'⚽',pts:teamPoints(tn)}));
+    return{name:n,color:info.color,teams,total:teams.reduce((s,t)=>s+t.pts,0)};
+  }).sort((a,b)=>b.total-a.total||a.name.localeCompare(b.name));
+  const max=Math.max(...rows.map(r=>r.total),1);
+  const top=rows[0].total;
+  const list=document.createElement('div');list.className='summary-list';
+  rows.forEach((p,i)=>{
+    const leadTie=p.total===top&&top>0;
+    const row=document.createElement('div');row.className='srow'+(leadTie?' top':'');
+    row.innerHTML=`
+      <div class="srank">${i+1}</div>
+      <div class="sbody">
+        <div class="shead">
+          <span class="snm"><span class="dot" style="background:${p.color}"></span>${p.name}${leadTie?' <span class="topflag">most so far</span>':''}</span>
+          <span class="stot">${p.total}<small>pts</small></span>
+        </div>
+        <div class="sbar"><span style="width:${(p.total/max*100).toFixed(1)}%;background:${p.color}"></span></div>
+        <div class="steams">${p.teams.map(t=>`<span>${t.flag} ${t.name} <b>${t.pts}</b></span>`).join('')}</div>
+      </div>`;
+    list.appendChild(row);
+  });
+  wrap.appendChild(list);
+  const note=document.createElement('p');note.className='snote';
+  note.innerHTML='Win = 3 · Draw = 1 · Loss = 0, totalled across each player\'s two teams. The pot still goes purely to whoever drew the eventual champions — this table is just bragging rights for the group stage.';
+  wrap.appendChild(note);
+}
+
+/* ===== tabs ===== */
+document.querySelectorAll('.tab').forEach(tab=>tab.addEventListener('click',()=>{
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  tab.classList.add('active');
+  document.getElementById('view-'+tab.dataset.view).classList.add('active');
+}));
+
+/* ===== update / live ===== */
+function stampNow(ok){const d=new Date();
+  document.getElementById('stamp').textContent=d.toLocaleString(undefined,{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})+(ok===false?' (offline data)':'');}
+
+/* Live feed: free, public-domain, no API key. Results land within hours of full-time.
+   Source: github.com/upbound-web/worldcup-live.json (fork of openfootball). */
+const FEED_URL='https://raw.githubusercontent.com/upbound-web/worldcup-live.json/master/2026/worldcup.json';
+const KO_ORDER=['Group stage','Round of 32','Round of 16','Quarter-final','Semi-final','Final'];
+const KO_LABEL={'Round of 32':'Round of 32','Round of 16':'Round of 16','Quarter-final':'Quarter-final','Semi-final':'Semi-final','Match for third place':'3rd-place play-off','Final':'Final'};
+const HOUSE=new Set(Object.keys(TEAMS));
+
+function winnerOf(m){
+  const s=m.score||{}; if(!s.ft) return null;
+  // prefer pens, then extra time, then full time
+  const arr=s.p||s.et||s.ft;
+  if(arr[0]===arr[1]) return s.p?(s.p[0]>s.p[1]?m.team1:m.team2):null;
+  return arr[0]>arr[1]?m.team1:m.team2;
+}
+
+async function fetchLiveData(){
+  const res=await fetch(FEED_URL,{cache:'no-store'});
+  if(!res.ok) throw new Error('feed '+res.status);
+  const data=await res.json();
+  const matches=data.matches||[];
+
+  // 1) recompute GROUP points/gd/form from group-stage matches
+  const stats={};  // name -> {pts,gf,ga,form:[{r,res}]}
+  const ensure=n=>stats[n]||(stats[n]={pts:0,gf:0,ga:0,form:[]});
+  const koRounds=new Set(['Round of 32','Round of 16','Quarter-final','Semi-final','Match for third place','Final']);
+
+  matches.forEach(m=>{
+    const s=m.score||{}; if(!s.ft) return;
+    const isGroup=!koRounds.has(m.round);
+    if(isGroup){
+      const a=ensure(m.team1),b=ensure(m.team2);
+      const [g1,g2]=s.ft;
+      a.gf+=g1;a.ga+=g2;b.gf+=g2;b.ga+=g1;
+      if(g1>g2){a.pts+=3;a.form.push('W');b.form.push('L');}
+      else if(g2>g1){b.pts+=3;b.form.push('W');a.form.push('L');}
+      else{a.pts++;b.pts++;a.form.push('D');b.form.push('D');}
+    }
+  });
+
+  // 2) write group points back into GROUP_ROSTERS (keep teams, update numbers)
+  for(const g of Object.keys(GROUP_ROSTERS)){
+    GROUP_ROSTERS[g]=GROUP_ROSTERS[g].map(row=>{
+      const st=stats[row[0]];
+      if(st) return [row[0],row[1],st.pts,st.gf-st.ga,0,st.form.slice(-3)];
+      return row;
+    });
+  }
+
+  // 3) advance each HOUSE team's round + alive status from knockout results
+  // furthest round a team appears in with a result, and whether they lost it
+  for(const name of HOUSE){
+    let round='Group stage', alive=true, lostAt=null;
+    matches.forEach(m=>{
+      if(m.team1!==name && m.team2!==name) return;
+      const played=m.score&&m.score.ft;
+      if(koRounds.has(m.round)){
+        // reached this KO round
+        if(KO_ORDER.indexOf(m.round)>KO_ORDER.indexOf(round)||round==='Group stage'){
+          if(KO_LABEL[m.round]) round=m.round;
+        }
+        if(played){
+          const w=winnerOf(m);
+          if(w && w!==name){ alive=false; lostAt=m.round; }
+        }
+      }
+    });
+    // group-stage elimination: team has 3 group games played but appears in no KO match
+    const inKO=matches.some(m=>koRounds.has(m.round)&&(m.team1===name||m.team2===name));
+    const groupGames=matches.filter(m=>!koRounds.has(m.round)&&(m.team1===name||m.team2===name)&&m.score&&m.score.ft).length;
+    if(!inKO && groupGames>=3){ alive=false; round='Group stage'; }
+
+    const t=TEAMS[name];
+    if(lostAt){ t.alive=false; t.round='Out — '+(KO_LABEL[lostAt]||lostAt); }
+    else if(!alive){ t.alive=false; t.round='Out — group stage'; }
+    else { t.alive=true; t.round=(round==='Group stage')?'Group stage':KO_LABEL[round]||round; }
+    if(stats[name]) t.form=stats[name].form.slice(-3);
+  }
+
+  // 4) refresh fixtures list for house teams (played + upcoming) from the feed
+  rebuildFixtures(matches);
+  return true;
+}
+
+function rebuildFixtures(matches){
+  const mine=matches.filter(m=>HOUSE.has(m.team1)||HOUSE.has(m.team2));
+  const order=['Round of 32','Round of 16','Quarter-final','Semi-final','Match for third place','Final'];
+  const played=[], upcoming={};
+  mine.forEach(m=>{
+    const s=m.score||{};
+    if(s.ft){
+      played.push({h:m.team1,a:m.team2,hs:s.ft[0],as:s.ft[1],st:'FT',
+        note:s.p?`pens ${s.p[0]}-${s.p[1]}`:s.et?'after ET':''});
+    } else {
+      const key=koRoundsName(m.round);
+      (upcoming[key]=upcoming[key]||[]).push({h:m.team1,a:m.team2,time:(m.date||'')});
+    }
+  });
+  const blocks=[];
+  if(played.length) blocks.push({day:'Results so far',list:played.slice(-14)});
+  Object.keys(upcoming).sort((a,b)=>order.indexOf(a)-order.indexOf(b)).forEach(r=>{
+    blocks.push({day:r+' · upcoming',list:upcoming[r]});
+  });
+  if(blocks.length){ FIXTURES.length=0; blocks.forEach(b=>FIXTURES.push(b)); }
+}
+function koRoundsName(r){return KO_LABEL[r]||r;}
+
+const refBtn=document.getElementById('refresh');
+async function renderAll(){renderGroups();renderLeaderboard();renderFixtures();renderBracket();renderSummary();}
+async function update(){
+  refBtn.classList.add('spin');refBtn.disabled=true;
+  let ok=true;
+  try{await fetchLiveData();}catch(e){console.error('Live update failed, showing last-known data:',e);ok=false;}
+  await renderAll();stampNow(ok);
+  refBtn.classList.remove('spin');refBtn.disabled=false;
+}
+refBtn.addEventListener('click',update);
+
+let liveTimer=null;const sw=document.getElementById('liveSwitch'),ld=document.getElementById('livedot');
+function setLive(on){
+  sw.classList.toggle('on',on);sw.setAttribute('aria-checked',on);ld.style.display=on?'inline-flex':'none';
+  if(on){update();liveTimer=setInterval(update,180000);}else{clearInterval(liveTimer);liveTimer=null;}
+}
+sw.addEventListener('click',()=>setLive(!sw.classList.contains('on')));
+sw.addEventListener('keydown',e=>{if(e.key===' '||e.key==='Enter'){e.preventDefault();setLive(!sw.classList.contains('on'));}});
+
+/* first paint: show seeded data instantly, then try to pull live in the background */
+renderAll();stampNow();
+update();
+
+</script>
+</body>
+</html>
